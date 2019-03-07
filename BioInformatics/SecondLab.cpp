@@ -180,15 +180,7 @@ void Add(char& a) {
 int main() {
 
 	ofstream fout;
-	fout.open("Pizdec.txt");
-	char my = 'A';
-	fout << my  << endl;
-	Add(my);
-	fout << my << endl;
-	Add(my);
-	fout << my << endl;
-	Add(my);
-	fout << my << endl;
+	fout.open("AminoToRNA.txt");
 
 	string Str;
 	string str_3d = "";
@@ -201,7 +193,7 @@ int main() {
 				str_3d += a;
 				str_3d += b;
 				str_3d += c;
-				fout << str_3d << " - " << Transform(str_3d) << endl;
+				fout << Transform(str_3d) << ' ' << str_3d << endl;
 			}
 		}
 	}
