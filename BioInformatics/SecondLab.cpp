@@ -1,14 +1,50 @@
 #include <iostream>
 #include <string>
+#include <unordered_map>
 #include <fstream>
 
 using namespace std;
+// patrOfString + FullString
+bool Search(string str, string FullStr) {
+	bool flag;
+	for (int i = 0; i < FullStr.length() - str.length() + 2; i++) {
+		flag = true;
+		if (str[0] == FullStr[i])
+			for (int j = 0; j < str.length(); j++) {
+				if (str[j] != FullStr[i + j]) {
+					flag = false;
+					break;
+				}
+			}
+		else flag = false;
+		if (flag) return true;
+	}
+	return false;
+}
+
+char ReverceSumb(char a) {
+	switch (a) {
+	case 'A': return 'T';
+	case 'C': return 'G';
+	case 'G': return 'C';
+	case 'T': return 'A';
+	default: return 'F';
+	}
+}
+
+string ReverceWord(string FullStr) {
+	string result = "";
+	for (int i = FullStr.length() - 1; i > -1; i--) {
+		result += ReverceSumb(FullStr[i]);
+	}
+	return result;
+}
 
 bool Amin(char chr) {
 	return (chr == 'A' || chr == 'U' || chr == 'C' || chr == 'G');
 }
 
-string TransfortToRNA(string defSTR) {
+string Transcrib(string defSTR) {
 	string result = "";
 	for (int i = 0; i < defSTR.length(); i++)
 		if (defSTR[i] == 'T') result += 'U';
@@ -91,7 +127,56 @@ char Transform(string Str_3D) {
 	}
 }
 
+void Add(char* a) {
+	switch (*a) {
+	case 'A': {
+		*a = 'U';
+		break;
+	}
+	case 'U': {
+		*a = 'C';
+		break;
+	}
+	case 'C': {
+		*a = 'G';
+		break;
+	}
+	case 'G': {
+		*a = '0';
+		break;
+	}
+	{
+	default:
+		break;
+	}
+	}
+
+}
+
 int main() {
+
+	std::unordered_map<char, string, std::hash<char>,std::equal_to<char>, std::allocator<char> > UnorderedMap;
+
+	string str3;
+
+	for (char a = 'A'; a != '0'; Add(&a))
+		for (char b = 'A'; b != '0'; Add(&b))
+			for (char c = 'A'; c != '0'; Add(&c)) {
+				str3 = "";
+				str3 += a;
+				str3 += b;
+				str3 += c;
+				UnorderedMap.insert(std::pair<char, string >(Transform(str3), str3));
+				// Заполнение таблицы по ключам
+			}
+
+	string FirstLine;
+	string SecondLine;
+	string Protein;
+	cin >> FirstLine;
+	cin >> Protein;
+
+	SecondLine = ReverceWord(FirstLine);
 
 	system("pause");
 
@@ -112,7 +197,7 @@ bool Amin(char chr) {
 	return (chr == 'A' || chr == 'U' || chr == 'C' || chr == 'G');
 }
 
-string TransfortToRNA(string defSTR) {
+string Transcrib(string defSTR) {
 	string result = "";
 	for (int i = 0; i < defSTR.length(); i++)
 		if (defSTR[i] == 'T') result += 'U';
