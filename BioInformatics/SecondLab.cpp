@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <fstream>
 
@@ -7,7 +8,7 @@ using namespace std;
 // patrOfString + FullString
 bool Search(string str, string FullStr) {
 	bool flag;
-	for (int i = 0; i < FullStr.length() - str.length() + 2; i++) {
+	for (int i = 0; i < FullStr.length() - str.length() + 1; i++) {
 		flag = true;
 		if (str[0] == FullStr[i])
 			for (int j = 0; j < str.length(); j++) {
@@ -153,12 +154,68 @@ void Add(char* a) {
 
 }
 
-int main() {
+bool IsOur(string amino, string test) {
+	string reverse = Transcrib(test);	
 
-	std::unordered_map<char, string, std::hash<char>,std::equal_to<char>, std::allocator<char> > UnorderedMap;
+	if (Search(amino, reverse))		
+		return true;
+	reverse = Transcrib(ReverceWord(test));
+
+	if (Search(amino, reverse))
+		return true;
+	return false;
+}
+
+void SearchAmino(string mystr, string FullString) {
+	string temp = "";
+	for (int i = 0; i < FullString.length() - mystr.length(); i++) {
+		temp = "";
+		for (int j = 0; j < mystr.length(); j++)
+			temp += FullString[i + j];
+		if (IsOur(mystr, temp)) std::cout << temp << endl;
+	}
+}
+
+bool KeyIsLive(unordered_map<char, vector<string> > MyMap, char Key) {
+	for (auto iter = MyMap.begin(); iter != MyMap.end(); iter++)
+		if (iter->first == Key) return true;
+	return false;
+}
+
+bool IHaveThis(vector<string> VS, string myStr) {
+	for (auto iter = VS.begin(); iter != VS.end(); iter++)
+		if (iter->data() == myStr) return true;
+	return false;
+}
+
+void HardRecursion(unordered_map<char,vector<string> > UM, string Word, string Protein, string myCombo, int count) {
+	string temp = myCombo;
+
+	for (auto iter = UM.at(Protein.at(Protein.length() - count)).begin(); iter != UM.at(Protein.at(Protein.length() - count)).end(); iter++) {
+		temp = myCombo;
+		temp += iter->data();
+		if (count > 1) HardRecursion(UM, Word, Protein, temp, count - 1);
+		else SearchAmino(temp, Word);
+
+	}
+}
+
+int main() {
 
 	string str3;
 
+	std::unordered_map<char, vector<string> > MyMap;
+
+	string FirstLine;
+	string Protein;
+	
+	cin >> FirstLine;
+	cin >> Protein;
+
+	char chr;
+
+	int size = Protein.length();
+	for (int i = 0; i < size; i++)
 	for (char a = 'A'; a != '0'; Add(&a))
 		for (char b = 'A'; b != '0'; Add(&b))
 			for (char c = 'A'; c != '0'; Add(&c)) {
@@ -166,19 +223,27 @@ int main() {
 				str3 += a;
 				str3 += b;
 				str3 += c;
-				UnorderedMap.insert(std::pair<char, string >(Transform(str3), str3));
+				chr = Protein.at(i);
+				if (Transform(str3) == chr)
+					if (!KeyIsLive(MyMap,chr))
+					{
+						vector<string> vect;
+						vect.push_back(str3);
+						MyMap.insert(pair<char, vector<string> >(Protein.at(i), vect));
+					}
+					else {
+						IHaveThis(MyMap.at(chr), str3);
+						MyMap.at(chr).push_back(str3);
+					}
+
 				// Заполнение таблицы по ключам
 			}
+	
+	string str = "";
 
-	string FirstLine;
-	string SecondLine;
-	string Protein;
-	cin >> FirstLine;
-	cin >> Protein;
+	HardRecursion(MyMap, FirstLine, Protein, str, Protein.length());
 
-	SecondLine = ReverceWord(FirstLine);
-
-	system("pause");
+	std::system("pause");
 
 	return 0;
 }
