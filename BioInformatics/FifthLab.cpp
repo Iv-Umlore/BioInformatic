@@ -1,3 +1,5 @@
+//////////////////////////////////////// Задача 5.2 ///////////////////////////////////////////
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -91,45 +93,21 @@ void SetProfile(int** HelpProfile, double** MyProfile, int size) {
 		summ = 0;
 		flag = false;
 		for (int j = 0; j < 4; j++)
-			summ += HelpProfile[j][i]/* + 1*/;
-		for (int j = 0; j < 4; j++) {
-			MyProfile[j][i] = (double)(HelpProfile[j][i]/* + 1*/ ) / summ;
-			// if (MyProfile[j][i] == 0.0) flag = true;
-		}
-		/*
-		if (flag) {
-			double Chance = 0.0;
-			double littleChance = 0.0;
-			int count = 0;
-			for (int j = 0; j < 4; j++) {
-				if (MyProfile[j][i] > 0.0) {
-					littleChance = (double)(size - HelpProfile[j][i]) * 0.002;
-					if (littleChance == 0.0) littleChance = 0.002;
-					MyProfile[j][i] -= littleChance;
-					Chance += littleChance;	 	
-				}
-				else count++;
-			}
-			Chance = Chance / count;
-
-			for (int j = 0; j < 4; j++) {
-				if (MyProfile[j][i] == 0.0)
-					MyProfile[j][i] += Chance;
-			}
-
-		}*/
+			summ += HelpProfile[j][i]/* + 1*/;	/* <------ Здесь*/			// Для решения задачи 5.3
+		for (int j = 0; j < 4; j++)											// Необходимо убрать комментарии у "+1"
+			MyProfile[j][i] = (double)(HelpProfile[j][i]/* + 1*/ ) / summ;	/* <----- и Здесь*/
 	}
 }
 
 double GetFavoriteScore(double** Profile, int ProfileSize) {
-	double res = 1.0;
+	double res = 0.0;
 	double best;
 
 	for (int i = 0; i < ProfileSize; i++) {
 		best = Profile[0][i];
 		for (int j = 1; j < 4; j++)
 			if (best < Profile[j][i]) best = Profile[j][i];
-		res *= best;
+		res += best;
 	}
 
 	return res;
@@ -192,16 +170,7 @@ int main() {
 			//////////////////
 			MyFavorite = GetStr(OurStr[j], 0, ProfileSize);
 			score = 0.0;
-			//////////////////
-			
-			/*for (int SPoint = 0; SPoint < OurStr[j].length() - ProfileSize + 1; SPoint++) {
-				tmpStr = GetStr(OurStr[j], SPoint, ProfileSize);
-				tmp = GetScore(tmpStr, Profile);
-				if (tmp > score) {
-					score = tmp;
-					MyFavorite = tmpStr;
-				}
-			}*/
+			////////////////
 
 			score = GetBestScore(OurStr[j], ProfileSize, Profile, MyFavorite);
 			
@@ -216,22 +185,12 @@ int main() {
 		}
 		
 		double thisScore = 1.0;
-		/*for (auto iter = Motifs.begin(); iter != Motifs.end(); iter++) {
-			(*iter).Score = GetScore((*iter).Str, Profile);
-			thisScore *= (*iter).Score;
-			summ += (*iter).Score;
-		}*/
 
 		thisScore = GetFavoriteScore(Profile, ProfileSize);
 
 		if ((TheBesterScore + 0.0000001 < thisScore)) {
 			TheBesterScore = thisScore;
 			VRec = Motifs;
-			/*PrintProfile(Profile, ProfileSize);
-			for (auto iter = Motifs.begin(); iter != Motifs.end(); iter++) {
-				cout << (*iter).Str << " " << (*iter).Score << endl;
-			}
-			cout << endl;*/
 		}
 
 		ResetProfile(ProfileHelp, ProfileSize);
