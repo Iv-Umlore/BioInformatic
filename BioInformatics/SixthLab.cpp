@@ -198,10 +198,10 @@ enum VectorPath {
 
 struct wordPath {
 	int charCount;
-	vector<VectorPath> path;
+	string substring;
 };
 
-int get_maximum(int& vertical, int& horizontal, int& diagonal, char chr1, char chr2, VectorPath& vect) {
+int get_maximum(int vertical, int horizontal, int diagonal, char chr1, char chr2, VectorPath& vect) {
 	if (chr1 == chr2) diagonal++;
 	if (diagonal >= horizontal && diagonal >= vertical) {
 		vect = DIAGONAL;
@@ -224,8 +224,8 @@ void math_current_distance(wordPath** arr, string& str1, string& str2) {
 	for (int i = 1; i < str1.length(); i++) {
 		for (int j = 1; j < str2.length(); j++) {
 			value = get_maximum(
-				arr[i - 1][j].charCount,
-				arr[i][j - 1].charCount,
+				(i > 1) ? arr[i - 1][j].charCount : -1,
+				(j > 1) ? arr[i][j - 1].charCount : -1,
 				arr[i - 1][j - 1].charCount,
 				str1[i],
 				str2[j],
@@ -237,56 +237,25 @@ void math_current_distance(wordPath** arr, string& str1, string& str2) {
 			switch (tmp)
 			{
 			case VERTICAL:
-				arr[i][j].path = arr[i - 1][j].path;
+				arr[i][j].substring = arr[i - 1][j].substring;
 
 				break;
 
 			case HORIZONTAL:
-				arr[i][j].path = arr[i][j - 1].path;
+				arr[i][j].substring = arr[i][j - 1].substring;
 				break;
 
 			case DIAGONAL:
-				arr[i][j].path = arr[i - 1][j - 1].path;
+				arr[i][j].substring = arr[i - 1][j - 1].substring;
+				if (value > arr[i - 1][j - 1].charCount) 
+					arr[i][j].substring += str1[i];
 				break;
 
 			default:
 				break;
 			}
-
-			arr[i][j].path.push_back(tmp);
 		}
 	}
-}
-
-string GetCorrectsubstring(vector<VectorPath> path, string str1, string str2) {
-	int firstCount = 0;
-	int secondCount = 0;
-
-	string result = "";
-
-	for (int i = 0; i < path.size() - 1; i++)
-		switch (path[i])
-		{
-		case VERTICAL: {
-			firstCount++;
-			break;
-		}
-		case HORIZONTAL: {
-			secondCount++;
-			break;
-		}
-		case DIAGONAL: {
-			firstCount++;
-			secondCount++;
-			if (str1[firstCount] == str2[secondCount])
-				result += str1[firstCount];
-			break;
-		}
-		default:
-			break;
-		}
-
-	return result;
 }
 
 string edit_distance(string &str1, string &str2) {
@@ -303,12 +272,13 @@ string edit_distance(string &str1, string &str2) {
 		arr[i] = new wordPath[distSize];
 		for (int j = 0; j < distSize; j++) {
 			arr[i][j].charCount = 0;
-			arr[i][j].path = vector<VectorPath>();
+			arr[i][j].substring = "";
 		}
 	}
-
+		
 	math_current_distance(arr, str1, str2);
-	return GetCorrectsubstring(arr[downSize - 1][distSize - 1].path, str1, str2);
+
+	return arr[downSize - 1][distSize - 1].substring;
 };
 
 int main() {
@@ -317,14 +287,14 @@ int main() {
 	getline(cin, str1);
 	getline(cin, str2);
 	if (str1 == "" && str2 == "")
-		cout << 0;
+		std::cout << 0;
 	else
 		if (str1 == "")
-			cout << str2.length();
+			std::cout << str2.length();
 		else if (str2 == "")
-			cout << str1.length();
+			std::cout << str1.length();
 		else
-			cout << edit_distance(str1, str2) << endl;
+			std::cout << edit_distance(str1, str2) << endl;
 
 	system("pause");
 	return 0;
